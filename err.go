@@ -6,10 +6,10 @@ import "fmt"
 const unxCd, unxMsg, unimCd, unimMsg = 10000, "UnexpectedError", 10001, "NotImplemented"
 
 type Error struct {
-	StatusCode   int
-	ErrorCode    int
-	ErrorMessage string
-	ErrorDetail  string
+	StatusCode   int    `json:"-"`
+	ErrorCode    int    `json:"errorCode"`
+	ErrorMessage string `json:"errorMessage"`
+	ErrorDetail  string `json:"errorDetail,omitempty"`
 }
 
 func (err *Error) Error() string {
