@@ -5,36 +5,78 @@ import "fmt"
 // TODO Make this configurable
 const unxCd, unxMsg, unimCd, unimMsg = 10000, "UnexpectedError", 10001, "NotImplemented"
 
+type ErrorCode struct {
+	Code    int
+	Message string
+}
+
 type Error struct {
-	StatusCode   int    `json:"-"`
-	ErrorCode    int    `json:"errorCode"`
-	ErrorMessage string `json:"errorMessage"`
-	ErrorDetail  string `json:"errorDetail,omitempty"`
+	ErrorCode   ErrorCode
+	StatusCode  int    `json:"-"`
+	ErrorDetail string `json:"errorDetail,omitempty"`
 }
 
 func (err *Error) Error() string {
 	return fmt.Sprintf(
 		"%d [%s]: %s | Requested Status Code: %d",
-		err.ErrorCode,
-		err.ErrorMessage,
+		err.ErrorCode.Code,
+		err.ErrorCode.Message,
 		err.ErrorDetail,
 		err.StatusCode,
 	)
 }
 
-func UnexpectedError(e error) Error {
+func NewError(
+	code ErrorCode,
+	statusCode int,
+	desc string,
+) Error {
 	return Error{
-		StatusCode:   500,
-		ErrorCode:    unxCd,
-		ErrorMessage: unxMsg,
-		ErrorDetail:  e.Error(),
+		StatusCode:  statusCode,
+		ErrorCode:   code,
+		ErrorDetail: desc,
 	}
 }
 
-func NotImplemented() Error {
+func NewBadRequestError(
+	code ErrorCode,
+	desc string,
+) Error {
 	return Error{
-		StatusCode:   501,
-		ErrorCode:    unimCd,
-		ErrorMessage: unimMsg,
+		StatusCode:  400,
+		ErrorCode:   code,
+		ErrorDetail: desc,
+	}
+}
+
+func NewServerError(
+	code ErrorCode,
+	desc string,
+) Error {
+	return Error{
+		StatusCode:  500,
+		ErrorCode:   code,
+		ErrorDetail: desc,
+	}
+}
+
+func NewUnexpectedError(e error) Error {
+	return Error{
+		StatusCode: 500,
+		ErrorCode: ErrorCode{
+			Code:    unxCd,
+			Message: unxMsg,
+		},
+		ErrorDetail: e.Error(),
+	}
+}
+
+func NewNotImplemented() Error {
+	return Error{
+		StatusCode: 501,
+		ErrorCode: ErrorCode{
+			Code:    unimCd,
+			Message: unimMsg,
+		},
 	}
 }
