@@ -3,7 +3,12 @@ package gorr
 import "fmt"
 
 // TODO Make this configurable
-const unxCd, unxMsg, unimCd, unimMsg = 10000, "UnexpectedError", 10001, "NotImplemented"
+const (
+	unxCd = 10000
+	unxMsg = "UnexpectedError"
+	unimCd = 10001
+	unimMsg = "NotImplemented"
+)
 
 type ErrorCode struct {
 	Code    int
@@ -30,8 +35,8 @@ func NewError(
 	code ErrorCode,
 	statusCode int,
 	desc string,
-) Error {
-	return Error{
+) *Error {
+	return &Error{
 		StatusCode:  statusCode,
 		ErrorCode:   code,
 		ErrorDetail: desc,
@@ -41,8 +46,8 @@ func NewError(
 func NewBadRequestError(
 	code ErrorCode,
 	desc string,
-) Error {
-	return Error{
+) *Error {
+	return &Error{
 		StatusCode:  400,
 		ErrorCode:   code,
 		ErrorDetail: desc,
@@ -52,16 +57,16 @@ func NewBadRequestError(
 func NewServerError(
 	code ErrorCode,
 	desc string,
-) Error {
-	return Error{
+) *Error {
+	return &Error{
 		StatusCode:  500,
 		ErrorCode:   code,
 		ErrorDetail: desc,
 	}
 }
 
-func NewUnexpectedError(e error) Error {
-	return Error{
+func NewUnexpectedError(e error) *Error {
+	return &Error{
 		StatusCode: 500,
 		ErrorCode: ErrorCode{
 			Code:    unxCd,
@@ -71,8 +76,8 @@ func NewUnexpectedError(e error) Error {
 	}
 }
 
-func NewNotImplemented() Error {
-	return Error{
+func NewNotImplemented() *Error {
+	return &Error{
 		StatusCode: 501,
 		ErrorCode: ErrorCode{
 			Code:    unimCd,
